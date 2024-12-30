@@ -252,7 +252,7 @@ resource "aws_instance" "jellyfin_server" {
 
   provisioner "remote-exec" {
     inline = [
-      "EBS_DEVICE_NAME=$(lsblk | grep ${var.EBS_MEDIA_VOLUME_SIZE}G | awk '{print $1}')",
+      "EBS_DEVICE_NAME=$(lsblk -b | grep $((1073741824 * ${var.EBS_MEDIA_VOLUME_SIZE})) | awk '{print $1}')",
       "sudo mkfs -t xfs /dev/$${EBS_DEVICE_NAME}",
       "EBS_DEVICE_UUID=$(sudo blkid | grep $${EBS_DEVICE_NAME} | awk -F'\"' '{print $2}')",
       "sudo echo -e \"UUID=$${EBS_DEVICE_UUID} /home/ec2-user/jellyfin/media  xfs  defaults,nofail  0  2\" | sudo tee -a /etc/fstab",
